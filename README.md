@@ -32,7 +32,7 @@
 - Extractor Listing Mode
 - Playlist Extraction Format Presets
 - Full Authorization (Login, Cookie, Referrer, and User-Agent)
-- With all essential commands (Embed Subtitle, Description, and More!)
+- All essential commands (Embed Subtitle, Description, and More!)
 - Auto-Update both [**YouTube-DL Suite**](https://github.com/MinorMole/YouTube-DL-Suite/releases/latest) and [**youtube-dl**](https://youtube-dl.org)
 
 ## Licence
