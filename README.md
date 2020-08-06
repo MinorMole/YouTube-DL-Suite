@@ -1,37 +1,36 @@
-## Welcome to GitHub Pages
+<p align="center">
+  <img height="70" src="https://minormole.github.io/YouTube-DL-Suite/img/logo.png">
+</p>
 
-You can use the [editor on GitHub](https://github.com/MinorMole/YouTube-DL-Suite/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+## Introduction
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+[**YouTube-DL Suite**](https://github.com/MinorMole/YouTube-DL-Suite/releases/latest) lets you use [**youtube-dl**](https://youtube-dl.org) with ease and typeless command.
 
-### Markdown
+## Usage
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+1. There are two ways of opening **YouTube-DL Suite**.
+  
+    1.1 Copy links into your clipboard (one link for each line) then open **"YouTube-DL Suite.cmd"**, it will get links from your clipboard.
+    
+    1.2 Drag and Drop text file (.txt) that contain links (one link for each line) into **"YouTube-DL Suite.cmd"**, it will get links from your text file.
 
-```markdown
-Syntax highlighted code block
+2. Follow the instruction.
 
-# Header 1
-## Header 2
-### Header 3
+3. Enjoy.
 
-- Bulleted
-- List
+- We recommend using authorization with referrer when download a large batch even on a public YouTube to prevent odd behavior from your address.
 
-1. Numbered
-2. List
+## Feature
 
-**Bold** and _Italic_ and `Code` text
+- Download Video
+- Download Audio
+- Live Streaming with an [**mpv**](https://mpv.io)
+- Archive Mode
+- Extractor Listing Mode
+- Playlist Extraction Format Presets
+- Full Authorization (Login, Cookie, Referrer, and User-Agent)
+- Auto-Update both [**YouTube-DL Suite**](https://github.com/MinorMole/YouTube-DL-Suite/releases/latest) and [**youtube-dl**](https://youtube-dl.org)
 
-[Link](url) and ![Image](src)
-```
+## Licence
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/MinorMole/YouTube-DL-Suite/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+[**The Unlicense**](https://github.com/MinorMole/YouTube-DL-Suite/blob/master/LICENSE).
