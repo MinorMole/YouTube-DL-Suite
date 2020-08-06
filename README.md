@@ -8,15 +8,17 @@
 
 ## Usage
 
-1. There are two ways of opening **YouTube-DL Suite**.
+1. [**Download YouTube-DL Suite**](https://github.com/MinorMole/YouTube-DL-Suite/releases/latest)
+
+2. There are two ways of opening **YouTube-DL Suite**.
   
-    1.1 Copy links into your clipboard (one link for each line) then open **"YouTube-DL Suite.cmd"**, it will get links from your clipboard.
+    2.1 Copy links into your clipboard (one link for each line) then open **"YouTube-DL Suite.cmd"**, it will get links from your clipboard.
     
-    1.2 Drag and Drop text file (.txt) that contain links (one link for each line) into **"YouTube-DL Suite.cmd"**, it will get links from your text file.
+    2.2 Drag and Drop text file (.txt) that contain links (one link for each line) into **"YouTube-DL Suite.cmd"**, it will get links from your text file.
 
-2. Follow the instruction.
+3. Follow the instruction.
 
-3. Enjoy.
+4. Enjoy.
 
 - We recommend using authorization with referrer when download a large batch even on a public YouTube to prevent odd behavior from your address.
 
