@@ -12,9 +12,9 @@
 
 2. There are two ways of opening **YouTube-DL Suite**.
   
-    2.1 Copy links into your clipboard (one link for each line) then open **"YouTube-DL Suite.cmd"**, it will get links from your clipboard.
+    1. Copy links into your clipboard (one link for each line) then open **"YouTube-DL Suite.cmd"**, it will get links from your clipboard.
     
-    2.2 Drag and Drop text file (.txt) that contain links (one link for each line) into **"YouTube-DL Suite.cmd"**, it will get links from your text file.
+    2. Drag and Drop text file (.txt) that contain links (one link for each line) into **"YouTube-DL Suite.cmd"**, it will get links from your text file.
 
 3. Follow the instruction.
 
