@@ -8,7 +8,7 @@
 
 ## Usage
 
-1. [**Download YouTube-DL Suite**](https://github.com/MinorMole/YouTube-DL-Suite/releases/latest)
+1. [**Download YouTube-DL Suite.**](https://github.com/MinorMole/YouTube-DL-Suite/releases/latest)
 
 2. There are two ways of opening **YouTube-DL Suite**.
   
@@ -24,7 +24,7 @@
 
 ## Feature
 
-- Fully Portable with Everything you ever need for [**youtube-dl**](https://youtube-dl.org).
+- Fully Portable with Everything you ever need for [**youtube-dl**](https://youtube-dl.org)
 - Download Video
 - Download Audio
 - Live Streaming with an [**mpv**](https://mpv.io)
@@ -32,6 +32,7 @@
 - Extractor Listing Mode
 - Playlist Extraction Format Presets
 - Full Authorization (Login, Cookie, Referrer, and User-Agent)
+- With all essential commands (Embed Subtitle, Description, and More!)
 - Auto-Update both [**YouTube-DL Suite**](https://github.com/MinorMole/YouTube-DL-Suite/releases/latest) and [**youtube-dl**](https://youtube-dl.org)
 
 ## Licence
