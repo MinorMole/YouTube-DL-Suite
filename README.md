@@ -6,6 +6,19 @@
 
 [**YouTube-DL Suite**](https://github.com/MinorMole/YouTube-DL-Suite/releases/latest) lets you use [**youtube-dl**](https://youtube-dl.org) with ease and typeless command.
 
+## Feature
+
+- Fully Portable with Everything you ever need for [**youtube-dl**](https://youtube-dl.org)
+- Download Video
+- Download Audio
+- Video Archival Mode
+- Live Streaming with an [**mpv**](https://mpv.io)
+- Extractor Listing Mode
+- Playlist Extraction Format Presets
+- Full Authorization (Login, Cookie, Referrer, and User-Agent)
+- All essential commands (Embed Subtitle, Description, Thumbnail, and More!)
+- Auto-Update both [**YouTube-DL Suite**](https://github.com/MinorMole/YouTube-DL-Suite/releases/latest) and [**youtube-dl**](https://youtube-dl.org)
+
 ## Usage
 
 1. [**Download YouTube-DL Suite.**](https://github.com/MinorMole/YouTube-DL-Suite/releases/latest)
@@ -19,19 +32,6 @@
 3. Follow the instruction.
 
 4. Enjoy.
-
-## Feature
-
-- Fully Portable with Everything you ever need for [**youtube-dl**](https://youtube-dl.org)
-- Download Video
-- Download Audio
-- Live Streaming with an [**mpv**](https://mpv.io)
-- Archive Mode
-- Extractor Listing Mode
-- Playlist Extraction Format Presets
-- Full Authorization (Login, Cookie, Referrer, and User-Agent)
-- All essential commands (Embed Subtitle, Description, and More!)
-- Auto-Update both [**YouTube-DL Suite**](https://github.com/MinorMole/YouTube-DL-Suite/releases/latest) and [**youtube-dl**](https://youtube-dl.org)
 
 ## Note
 
