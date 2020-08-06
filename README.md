@@ -33,4 +33,4 @@
 
 ## Licence
 
-[**The Unlicense**](https://github.com/MinorMole/YouTube-DL-Suite/blob/master/LICENSE).
+[**The Unlicense.**](https://github.com/MinorMole/YouTube-DL-Suite/blob/master/LICENSE)
