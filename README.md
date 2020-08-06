@@ -20,9 +20,6 @@
 
 4. Enjoy.
 
-> - Yes, with authorization you can download a member-only video or paid program.
-> - We recommend using authorization with referrer when download a large batch even on a public YouTube to prevent a robotic checker on your address.
-
 ## Feature
 
 - Fully Portable with Everything you ever need for [**youtube-dl**](https://youtube-dl.org)
@@ -35,6 +32,12 @@
 - Full Authorization (Login, Cookie, Referrer, and User-Agent)
 - All essential commands (Embed Subtitle, Description, and More!)
 - Auto-Update both [**YouTube-DL Suite**](https://github.com/MinorMole/YouTube-DL-Suite/releases/latest) and [**youtube-dl**](https://youtube-dl.org)
+
+## Note
+
+- We recommend using authorization with referrer when download a large batch even on a public YouTube video to prevent a robotic checker on your address.
+- Yes, with authorization you can download a member-only video or paid program.
+- Please do not re-upload those videos or redistribute them publicly.
 
 ## Licence
 
