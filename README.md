@@ -20,7 +20,8 @@
 
 4. Enjoy.
 
-- We recommend using authorization with referrer when download a large batch even on a public YouTube to prevent odd behavior from your address.
+> - We recommend using authorization with referrer when download a large batch even on a public YouTube to prevent a robotic checker on your address.
+> - Yes, with authorization you can download a member-only video or paid program.
 
 ## Feature
 
