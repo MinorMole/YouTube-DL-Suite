@@ -24,7 +24,7 @@
 
 ## Feature
 
-- Full Package with Everything you need for [**youtube-dl**](https://youtube-dl.org).
+- Fully Portable with Everything you ever need for [**youtube-dl**](https://youtube-dl.org).
 - Download Video
 - Download Audio
 - Live Streaming with an [**mpv**](https://mpv.io)
