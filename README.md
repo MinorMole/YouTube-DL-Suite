@@ -37,7 +37,7 @@
 
 - We recommend using authorization with referrer when download a large batch even on a public YouTube video to prevent a robotic checker on your address.
 - Yes, with authorization you can download a member-only video or paid program.
-- Please do not re-upload those videos or redistribute them publicly.
+- Please do not re-upload the video or redistribute them publicly if you don't have a right to do so.
 
 ## Licence
 
