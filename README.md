@@ -33,6 +33,7 @@
     > - https://www.youtube.com/watch?v=fsnGeRfAI2I
     > - https://youtu.be/kXoeH9xUef4
     > - https://www.youtube.com/playlist?list=PLZ34fLWik_iAP2AdGLOHthUhAJTrEXqGb
+    > - https://www.youtube.com/playlist?list=UUqm3BQLlJfvkTsX_hvm0UmA
 
 3. Follow the instruction that shows in the command line window.
 
@@ -40,6 +41,7 @@
 
 ## Note
 
+- If you want to download the whole YouTube channel. You can do so by going to the Video tab of the channel then click **PLAY ALL** to get the playlist of the whole channel.
 - We recommend using authorization with referrer when download a large batch even on a public YouTube video to prevent a robotic checker on your address.
 - Yes, with authorization you can download a member-only video or paid program.
 - Please do not re-upload the video or redistribute them publicly if you don't have a right to do so.
