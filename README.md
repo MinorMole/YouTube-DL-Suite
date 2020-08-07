@@ -35,7 +35,7 @@
     > - https://www.youtube.com/playlist?list=PLZ34fLWik_iAP2AdGLOHthUhAJTrEXqGb
     > - https://www.youtube.com/playlist?list=UUqm3BQLlJfvkTsX_hvm0UmA
 
-3. Follow the instruction that shows in the command line window. You can select the choice by either press the number on the Numpad or press the Y or N key on your keyboard.
+3. Follow the instruction that shows in the command line window. You can select the choice by either press the number on the Numpad or press the **Y** or **N** key on your keyboard.
 
 4. Enjoy.
 
