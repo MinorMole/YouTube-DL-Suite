@@ -6,6 +6,19 @@
 
 [**YouTube-DL Suite**](https://github.com/MinorMole/YouTube-DL-Suite/releases/latest) lets you use [**youtube-dl**](https://youtube-dl.org) with ease and typeless command.
 
+## Feature
+
+- Fully Portable with Everything you ever need for [**youtube-dl**](https://youtube-dl.org)
+- Download Video
+- Download Audio
+- Video Archival Mode
+- Live Streaming with an [**mpv**](https://mpv.io)
+- Extractor Listing Mode
+- Playlist Extraction Format Presets
+- Full Authorization (Login, Cookie, Referrer, and User-Agent)
+- All essential commands (Embed Subtitle, Description, Thumbnail, and More!)
+- Auto-Update both [**YouTube-DL Suite**](https://github.com/MinorMole/YouTube-DL-Suite/releases/latest) and [**youtube-dl**](https://youtube-dl.org)
+
 ## Usage
 
 1. [**Download YouTube-DL Suite.**](https://github.com/MinorMole/YouTube-DL-Suite/releases/latest)
@@ -20,20 +33,11 @@
 
 4. Enjoy.
 
-- We recommend using authorization with referrer when download a large batch even on a public YouTube to prevent odd behavior from your address.
+## Note
 
-## Feature
-
-- Fully Portable with Everything you ever need for [**youtube-dl**](https://youtube-dl.org)
-- Download Video
-- Download Audio
-- Live Streaming with an [**mpv**](https://mpv.io)
-- Archive Mode
-- Extractor Listing Mode
-- Playlist Extraction Format Presets
-- Full Authorization (Login, Cookie, Referrer, and User-Agent)
-- All essential commands (Embed Subtitle, Description, and More!)
-- Auto-Update both [**YouTube-DL Suite**](https://github.com/MinorMole/YouTube-DL-Suite/releases/latest) and [**youtube-dl**](https://youtube-dl.org)
+- We recommend using authorization with referrer when download a large batch even on a public YouTube video to prevent a robotic checker on your address.
+- Yes, with authorization you can download a member-only video or paid program.
+- Please do not re-upload the video or redistribute them publicly if you don't have a right to do so.
 
 ## Licence
 
