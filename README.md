@@ -29,7 +29,7 @@
     
     2. Drag and Drop text file (.txt) that contains links (one link for each line) into **"YouTube-DL Suite.cmd"**, it will get links from your text file.
     
-    > **It also supports the playlist link, it will download all the video in the playlist. The link can be any form, for example:**
+    > **It also supports the playlist link even a search link, it will download all the video in the link. The link can be any form, for example:**
     > - https://www.youtube.com/watch?v=fsnGeRfAI2I
     > - https://youtu.be/kXoeH9xUef4
     > - https://www.youtube.com/playlist?list=PLZ34fLWik_iAP2AdGLOHthUhAJTrEXqGb
