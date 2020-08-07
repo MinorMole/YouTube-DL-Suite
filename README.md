@@ -23,13 +23,13 @@
 
 1. [**Download YouTube-DL Suite.**](https://github.com/MinorMole/YouTube-DL-Suite/releases/latest)
 
-2. There are two ways of opening **YouTube-DL Suite**.
+2. There are two ways of opening **YouTube-DL Suite**. Then extract the folder to where you want.
   
     1. Copy links into your clipboard (one link for each line) then open **"YouTube-DL Suite.cmd"**, it will get links from your clipboard.
     
     2. Drag and Drop text file (.txt) that contains links (one link for each line) into **"YouTube-DL Suite.cmd"**, it will get links from your text file.
     
-    > **The link can be any form and it also supports the playlist link, for example:**
+    > **It also supports the playlist link, it will download all the video in the playlist. The link can be any form, for example:**
     > - https://www.youtube.com/watch?v=fsnGeRfAI2I
     > - https://youtu.be/kXoeH9xUef4
     > - https://www.youtube.com/playlist?list=PLZ34fLWik_iAP2AdGLOHthUhAJTrEXqGb
