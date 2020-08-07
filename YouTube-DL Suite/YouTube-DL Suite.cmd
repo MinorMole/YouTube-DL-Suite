@@ -125,7 +125,7 @@ ECHO.
 CHOICE /C 01 /N /M "Choose Authorization Mode:"
 IF %ERRORLEVEL%==1 CALL :COOKIES_FORM
 IF %ERRORLEVEL%==2 CALL :LOGIN_FORM
-CLS & SET /P REFERER=Referer URL e.g. http://youtube.com (leave empty to skip): 
+CLS & SET /P REFERER=Referer URL e.g. https://www.youtube.com (leave empty to skip): 
 IF DEFINED REFERER SET REFERER=--referer %REFERER%
 IF NOT %MODE%==LIVE CALL :DELAY
 EXIT /B
