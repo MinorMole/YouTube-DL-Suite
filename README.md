@@ -34,7 +34,7 @@
     > - https://youtu.be/kXoeH9xUef4
     > - https://www.youtube.com/playlist?list=PLZ34fLWik_iAP2AdGLOHthUhAJTrEXqGb
 
-3. Follow the instruction.
+3. Follow the instruction that shows in the command line window.
 
 4. Enjoy.
 
