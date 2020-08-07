@@ -28,6 +28,11 @@
     1. Copy links into your clipboard (one link for each line) then open **"YouTube-DL Suite.cmd"**, it will get links from your clipboard.
     
     2. Drag and Drop text file (.txt) that contains links (one link for each line) into **"YouTube-DL Suite.cmd"**, it will get links from your text file.
+    
+    > **The link can be any form and it also supports the playlist link, for example:**
+    > - https://www.youtube.com/watch?v=fsnGeRfAI2I
+    > - https://youtu.be/kXoeH9xUef4
+    > - https://www.youtube.com/playlist?list=PLZ34fLWik_iAP2AdGLOHthUhAJTrEXqGb
 
 3. Follow the instruction.
 
