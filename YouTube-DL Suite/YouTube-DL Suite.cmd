@@ -1,13 +1,13 @@
 @ECHO OFF & CLS
 SET DEBUG=False
-SET VERSION=2020.08.07
+SET VERSION=2020.08.11
 SET USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36
 TITLE YouTube-DL Suite [%VERSION%]
 
 FOR /F %%a IN ('PowerShell -Command "Get-Date -format HHmmssffff"') DO SET TIMENOW=%%a
 IF %DEBUG%==True SET VERBOSE=--verbose
 IF "%~1"=="" (
-	"%~d0%~p0tools\paste.exe" > "%TEMP%\%TIMENOW%_Link.txt"
+	PowerShell -Command "Get-Clipboard" > "%TEMP%\%TIMENOW%_Link.txt"
 	SET LINK="%TEMP%\%TIMENOW%_Link.txt"
 ) ELSE (
 	IF EXIST "%~1" (
@@ -23,7 +23,7 @@ IF "%~1"=="" (
 	)
 )
 TASKLIST /FI "IMAGENAME EQ youtube-dl.exe" 2>NUL | FIND /I /N "youtube-dl.exe">NUL
-IF NOT %ERRORLEVEL%==0 CALL :UPDATE
+IF NOT %ERRORLEVEL%==0 CALL :DAILY_CHECK_UPDATE
 
 :MODE
 CLS
@@ -73,8 +73,8 @@ IF %MODE%==AUDIO (
 GOTO :END
 
 :LIVE
-CLS & "%~d0%~p0tools\youtube-dl.exe" %COOKIES_CMD% %LOGIN_CMD% %REFERER% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --no-playlist --simulate --get-filename --restrict-filenames -a %LINK% -o "%%(uploader)s %%(title)s" > "%TEMP%\%TIMENOW%_Title.txt"
-SET /P TITLE= < "%TEMP%\%TIMENOW%_Title.txt"
+CLS & "%~d0%~p0tools\youtube-dl.exe" %COOKIES_CMD% %LOGIN_CMD% %REFERER% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --no-playlist --simulate --get-filename --restrict-filenames -a %LINK% -o "%%(uploader)s %%(title)s">"%TEMP%\%TIMENOW%_Title.txt"
+SET /P TITLE=<"%TEMP%\%TIMENOW%_Title.txt"
 START "%TITLE%" /HIGH CMD /Q /C ""%~d0%~p0tools\youtube-dl.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --skip-unavailable-fragments --no-playlist --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %LIVE_FORMAT% -o - -a %LINK% | "%~d0%~p0tools\mpv\mpv.exe" - --title="%TITLE%" --cache-dir="%TEMP%" --no-border --ontop"
 EXIT /B
 
@@ -223,14 +223,26 @@ IF %ERRORLEVEL%==4 SET LIVE_FORMAT=-f "bestvideo[ext=webm,height^<=?1080]+bestau
 IF %ERRORLEVEL%==5 SET LIVE_FORMAT=-f "bestvideo[ext=webm,height^<=?720]+bestaudio[ext=webm]/bestvideo[ext=mp4,height^<=?720]+bestaudio[ext=m4a]/bestvideo[height^<=?720]+bestaudio/best[height^<=?720]"
 EXIT /B
 
-:UPDATE
-ECHO Checking for Updates ... & "%~d0%~p0tools\updater.vbs"
+:DAILY_CHECK_UPDATE
+FOR /F %%a IN ('PowerShell -Command "Get-Date -format dd"') DO SET TODAY_NOW=%%a
+SET /P TODAY_SAVE=<"%~d0%~p0tools\check"
+IF NOT "%TODAY_NOW%"=="%TODAY_SAVE%" CALL :CHECK_UPDATE
+EXIT /B
+
+:CHECK_UPDATE
+ECHO Checking for YouTube-DL Suite updates . . .
+"%~d0%~p0tools\wget.exe" --quiet --no-verbose --no-check-certificate --no-hsts --no-cookies "https://github.com/MinorMole/YouTube-DL-Suite/releases/latest/download/version" -O "%~d0%~p0tools\version"
 SET /P VERSION_CHECK=<"%~d0%~p0tools\version"
-IF NOT %VERSION%==%VERSION_CHECK% (
-	CLS & ECHO YouTube-DL Suite %VERSION_CHECK% is Released! Please Update. & ECHO. & PAUSE
-	START https://github.com/MinorMole/YouTube-DL-Suite/releases/latest & GOTO :END
+IF "%VERSION%"=="%VERSION_CHECK%" (
+	ECHO %TODAY_NOW%>"%~d0%~p0tools\check"
+) ELSE (
+	CLS & ECHO YouTube-DL Suite %VERSION_CHECK% is Released! & ECHO. & ECHO Press any key to download . . . & ECHO. & PAUSE>NUL
+	START https://github.com/MinorMole/YouTube-DL-Suite/releases/latest/download/YouTube-DL.Suite.zip
+	START https://github.com/MinorMole/YouTube-DL-Suite/releases/latest
+	GOTO :END
 )
-"%~d0%~p0tools\youtube-dl.exe" --update
+CLS & ECHO Checking for youtube-dl updates . . .
+"%~d0%~p0tools\youtube-dl.exe" --update --no-check-certificate
 EXIT /B
 
 :END
