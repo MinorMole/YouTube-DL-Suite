@@ -21,7 +21,7 @@
 
 ## Usage
 
-1. [**Download YouTube-DL Suite.**](https://github.com/MinorMole/YouTube-DL-Suite/releases/latest) Then extract the folder to where you want.
+1. [**Download YouTube-DL Suite.**](https://github.com/MinorMole/YouTube-DL-Suite/releases/latest/download/YouTube-DL.Suite.zip) Then extract the folder to where you want.
 
 2. There are two ways of opening **YouTube-DL Suite**.
   
