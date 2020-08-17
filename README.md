@@ -34,6 +34,7 @@
     > - https://youtu.be/kXoeH9xUef4
     > - https://www.youtube.com/playlist?list=PLZ34fLWik_iAP2AdGLOHthUhAJTrEXqGb
     > - https://www.youtube.com/playlist?list=UUqm3BQLlJfvkTsX_hvm0UmA
+    > - https://www.youtube.com/channel/UCqm3BQLlJfvkTsX_hvm0UmA
     > - https://www.youtube.com/results?search_query=watame
 
 3. Follow the instruction that shows in the command line window. You can select the choice by either press the number on the Numpad or press the **Y** or **N** key on your keyboard for **Yes** or **No** answer.
@@ -42,7 +43,7 @@
 
 ## Note
 
-- If you want to download the whole YouTube channel. You can do so by going to the **Video** tab of the channel then click **PLAY ALL** to get the playlist of the whole channel.
+- If you want to download the whole YouTube channel. You can do so by using a URL of the channel.
 - We recommend using authorization with referrer when download a large batch even on a public YouTube video to prevent a robotic checker on your address.
 - Yes, with authorization you can download a member-only video or paid program.
 - Please do not re-upload the video or redistribute them publicly if you don't have a right to do so.
