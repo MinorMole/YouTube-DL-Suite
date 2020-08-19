@@ -1,7 +1,7 @@
 @ECHO OFF & CLS
 SET DEBUG=False
-SET VERSION=2020.08.11
-SET USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36
+SET VERSION=2020.08.20
+SET USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36
 TITLE YouTube-DL Suite [%VERSION%]
 
 FOR /F %%a IN ('PowerShell -Command "Get-Date -format HHmmssffff"') DO SET TIMENOW=%%a
@@ -27,20 +27,32 @@ IF NOT %ERRORLEVEL%==0 CALL :DAILY_CHECK_UPDATE
 
 :MODE
 CLS
-ECHO [0] Download Video
-ECHO [1] Download Audio
-ECHO [2] Live Streaming
-ECHO [3] Video Archival
-ECHO [4] Listing Supported Websites
+ECHO [0] Video
+ECHO [1] Video ^(Archival^)
+ECHO [2] Audio
+ECHO [3] Audio ^(Archival^)
+ECHO [4] Live Streaming
+ECHO [5] Subtitle
+ECHO [6] Thumbnail
+ECHO [7] Listing Supported Websites
 ECHO.
-CHOICE /C 01234 /N /M "Choose Mode:"
+CHOICE /C 01234567 /N /M "Choose Mode:"
 IF %ERRORLEVEL%==1 SET MODE=VIDEO
-IF %ERRORLEVEL%==2 SET MODE=AUDIO
-IF %ERRORLEVEL%==3 SET MODE=LIVE
-IF %ERRORLEVEL%==4 SET MODE=ARCHIVE
-IF %ERRORLEVEL%==5 CLS & "%~d0%~p0tools\youtube-dl.exe" --extractor-descriptions & ECHO. & PAUSE & GOTO :MODE
+IF %ERRORLEVEL%==2 SET MODE=VIDEO_ARCHIVAL
+IF %ERRORLEVEL%==3 SET MODE=AUDIO
+IF %ERRORLEVEL%==4 SET MODE=AUDIO_ARCHIVAL
+IF %ERRORLEVEL%==5 SET MODE=LIVE
+IF %ERRORLEVEL%==6 SET MODE=SUBTITLE
+IF %ERRORLEVEL%==7 SET MODE=THUMBNAIL
+IF %ERRORLEVEL%==8 CALL :LIST
 
 IF %MODE%==VIDEO (
+	CALL :VIDEO_SELECTION
+	CALL :PLAYLIST
+)
+IF %MODE%==VIDEO_ARCHIVAL (
+	SET ARCHIVAL=True
+	SET DATABASE=--write-annotations --download-archive "%~d0%~p0YouTube-DL Suite (Archive).txt"
 	CALL :VIDEO_SELECTION
 	CALL :PLAYLIST
 )
@@ -48,34 +60,52 @@ IF %MODE%==AUDIO (
 	CALL :AUDIO_SELECTION
 	CALL :PLAYLIST
 )
+IF %MODE%==AUDIO_ARCHIVAL (
+	SET ARCHIVAL=True
+	SET DATABASE=--write-annotations --download-archive "%~d0%~p0YouTube-DL Suite (Archive).txt"
+	CALL :AUDIO_SELECTION
+	CALL :PLAYLIST
+)
 IF %MODE%==LIVE (
 	CALL :LIVE_SELECTION
 )
-IF %MODE%==ARCHIVE (
-	CALL :VIDEO_SELECTION
-	CALL :PLAYLIST
-	SET DATABASE=--write-annotations --download-archive "%~d0%~p0YouTube-DL Suite (Archive).txt"
+IF %MODE%==SUBTITLE (
+	CALL :SUBTITLE
+) ELSE (
+	IF %MODE%==THUMBNAIL (
+		SET THUMBNAIL=--skip-download --write-thumbnail
+		SET SAVEPATH="%~d0%~p0%%(title)s.%%(ext)s"
+	) ELSE (
+		SET SUBTITLE=--all-subs --embed-subs --sub-format best --convert-subs srt
+	)
 )
 
 :AUTH
 CLS & CHOICE /C yn /M "Authorization Requirements"
 IF %ERRORLEVEL%==1 CALL :AUTH_MODE
 
-IF %MODE%==AUDIO (
-	CLS & "%~d0%~p0tools\youtube-dl.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% %DELAY% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --fragment-retries infinite --console-title --yes-playlist %PLAYLIST_REVERSE% --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DATABASE% --add-metadata -x --audio-quality 0 --audio-format %AUDIO_FORMAT% -f "bestaudio[ext=webm]/bestaudio[ext=m4a]/bestaudio/best" -a %LINK% -o %SAVEPATH%
-) ELSE (
-	IF %MODE%==LIVE (
-		CALL :LIVE
-	) ELSE (
-		CLS & "%~d0%~p0tools\youtube-dl.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% %DELAY% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --fragment-retries infinite --console-title --yes-playlist %PLAYLIST_REVERSE% --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DATABASE% --add-metadata --all-subs --sub-format best --convert-subs srt --embed-subs %THUMBNAIL% %VIDEO_FORMAT% -a %LINK% -o %SAVEPATH%	
-	)
-)
+IF %MODE%==VIDEO CALL :VIDEO
+IF %MODE%==VIDEO_ARCHIVAL CALL :VIDEO
+IF %MODE%==AUDIO CALL :AUDIO
+IF %MODE%==AUDIO_ARCHIVAL CALL :AUDIO
+IF %MODE%==LIVE CALL :LIVE
+IF %MODE%==SUBTITLE CALL :VIDEO
+IF %MODE%==THUMBNAIL CALL :VIDEO
+
 GOTO :END
 
+:VIDEO
+CLS & "%~d0%~p0tools\youtube-dl.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% %DELAY% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --fragment-retries infinite --console-title --yes-playlist %PLAYLIST_REVERSE% --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DATABASE% --add-metadata %SUBTITLE% %THUMBNAIL% %VIDEO_FORMAT% --batch-file %LINK% --output %SAVEPATH%	
+EXIT /B
+
+:AUDIO
+CLS & "%~d0%~p0tools\youtube-dl.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% %DELAY% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --fragment-retries infinite --console-title --yes-playlist %PLAYLIST_REVERSE% --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DATABASE% --add-metadata --extract-audio --audio-quality 0 --audio-format %AUDIO_FORMAT% -f "bestaudio[ext=webm]/bestaudio[ext=m4a]/bestaudio/best" --batch-file %LINK% --output %SAVEPATH%
+EXIT /B
+
 :LIVE
-CLS & "%~d0%~p0tools\youtube-dl.exe" %COOKIES_CMD% %LOGIN_CMD% %REFERER% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --no-playlist --simulate --get-filename --restrict-filenames -a %LINK% -o "%%(uploader)s %%(title)s">"%TEMP%\%TIMENOW%_Title.txt"
+CLS & "%~d0%~p0tools\youtube-dl.exe" %COOKIES_CMD% %LOGIN_CMD% %REFERER% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --no-playlist --simulate --get-filename --restrict-filenames --batch-file %LINK% --output "%%(uploader)s %%(title)s">"%TEMP%\%TIMENOW%_Title.txt"
 SET /P TITLE=<"%TEMP%\%TIMENOW%_Title.txt"
-START "%TITLE%" /HIGH CMD /Q /C ""%~d0%~p0tools\youtube-dl.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --skip-unavailable-fragments --no-playlist --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %LIVE_FORMAT% -o - -a %LINK% | "%~d0%~p0tools\mpv\mpv.exe" - --title="%TITLE%" --cache-dir="%TEMP%" --no-border --ontop"
+START "%TITLE%" /HIGH CMD /Q /C ""%~d0%~p0tools\youtube-dl.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --skip-unavailable-fragments --no-playlist --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %LIVE_FORMAT% --output - --batch-file %LINK% | "%~d0%~p0tools\mpv\mpv.exe" - --title="%TITLE%" --cache-dir="%TEMP%" --no-border --ontop"
 EXIT /B
 
 :PLAYLIST
@@ -87,21 +117,21 @@ ECHO [3] Channel Playlist & ECHO. ^> Channel Name\[20200712] Clip A (P8OjkcLzYCM
 CHOICE /C 0123 /N /M "Choose Playlist Extraction Format:"
 IF %ERRORLEVEL%==1 (
 	SET PLAYLIST_REVERSE=--playlist-reverse
-	IF %MODE%==ARCHIVE (
+	IF "%ARCHIVAL%"=="True" (
 		SET SAVEPATH="%~d0%~p0Archive\%%(uploader)s\%%(title)s.%%(ext)s"
 	) ELSE (
 		SET SAVEPATH="%~d0%~p0%%(title)s.%%(ext)s"
 	)
 )
 IF %ERRORLEVEL%==2 (
-	IF %MODE%==ARCHIVE (
+	IF "%ARCHIVAL%"=="True" (
 		SET SAVEPATH="%~d0%~p0Archive\%%(uploader)s\%%(playlist)s\#%%(playlist_index)s - %%(title)s.%%(ext)s"
 	) ELSE (
 		SET SAVEPATH="%~d0%~p0%%(playlist)s\#%%(playlist_index)s - %%(title)s.%%(ext)s"
 	)
 )
 IF %ERRORLEVEL%==3 (
-	IF %MODE%==ARCHIVE (
+	IF "%ARCHIVAL%"=="True" (
 		SET SAVEPATH="%~d0%~p0Archive\%%(uploader)s\%%(playlist)s\(%%(playlist_index)s) %%(title)s.%%(ext)s"
 	) ELSE (
 		SET SAVEPATH="%~d0%~p0%%(playlist)s\(%%(playlist_index)s) %%(title)s.%%(ext)s"
@@ -109,7 +139,7 @@ IF %ERRORLEVEL%==3 (
 )
 IF %ERRORLEVEL%==4 (
 	SET PLAYLIST_REVERSE=--playlist-reverse
-	IF %MODE%==ARCHIVE (
+	IF "%ARCHIVAL%"=="True" (
 		SET SAVEPATH="%~d0%~p0Archive\%%(uploader)s\[%%(upload_date)s] %%(title)s (%%(id)s).%%(ext)s"
 	) ELSE (
 		SET SAVEPATH="%~d0%~p0%%(uploader)s\[%%(upload_date)s] %%(title)s (%%(id)s).%%(ext)s"
@@ -222,6 +252,32 @@ IF %ERRORLEVEL%==3 SET LIVE_FORMAT=-f "bestvideo[ext=webm,height^<=?1440]+bestau
 IF %ERRORLEVEL%==4 SET LIVE_FORMAT=-f "bestvideo[ext=webm,height^<=?1080]+bestaudio[ext=webm]/bestvideo[ext=mp4,height^<=?1080]+bestaudio[ext=m4a]/bestvideo[height^<=?1080]+bestaudio/best[height^<=?1080]"
 IF %ERRORLEVEL%==5 SET LIVE_FORMAT=-f "bestvideo[ext=webm,height^<=?720]+bestaudio[ext=webm]/bestvideo[ext=mp4,height^<=?720]+bestaudio[ext=m4a]/bestvideo[height^<=?720]+bestaudio/best[height^<=?720]"
 EXIT /B
+
+:SUBTITLE
+CLS
+ECHO Choose the language of the subtitle by letters code, for example:
+ECHO.
+ECHO  English            ^> en
+ECHO  Thai               ^> th
+ECHO  Japanese           ^> ja
+ECHO  Taiwanese Mandarin ^> zh-TW
+ECHO.
+SET /P SUBTITLE_LANGUAGE=Language Code (leave empty to download all subtitle available): 
+IF DEFINED SUBTITLE_LANGUAGE (
+	SET SUBTITLE_LANGUAGE=--sub-lang %SUBTITLE_LANGUAGE%
+) ELSE (
+	SET SUBTITLE_LANGUAGE=--all-subs
+)
+CLS & CHOICE /C yn /M "Download YouTube's Automatically Generated Subtitle"
+IF %ERRORLEVEL%==1 SET SUBTITLE_AUTO=--write-auto-sub
+SET SUBTITLE=--skip-download --write-sub --sub-format best %SUBTITLE_AUTO% %SUBTITLE_LANGUAGE%
+SET SAVEPATH="%~d0%~p0%%(title)s.%%(ext)s"
+EXIT /B
+
+:LIST
+"%~d0%~p0tools\youtube-dl.exe" --extractor-descriptions>"%TEMP%\YouTube-DL Supported Websites"
+START "YouTube-DL Supported Websites" /B Notepad "%TEMP%\YouTube-DL Supported Websites"
+GOTO :MODE
 
 :DAILY_CHECK_UPDATE
 FOR /F %%a IN ('PowerShell -Command "Get-Date -format dd"') DO SET TODAY_NOW=%%a
