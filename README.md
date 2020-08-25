@@ -12,6 +12,9 @@
 - Download Video
 - Download Audio
 - Video Archival Mode
+- Audio Archival Mode
+- Download Subtitle
+- Download Thumbnail
 - Live Streaming with an [**mpv**](https://mpv.io)
 - Extractor Listing Mode
 - Playlist Extraction Format Presets
