@@ -1,6 +1,6 @@
 @ECHO OFF & CLS
 SET DEBUG=False
-SET VERSION=2020.08.20
+SET VERSION=2020.09.11
 SET USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36
 TITLE YouTube-DL Suite [%VERSION%]
 
@@ -297,8 +297,10 @@ IF "%VERSION%"=="%VERSION_CHECK%" (
 	START https://github.com/MinorMole/YouTube-DL-Suite/releases/latest
 	GOTO :END
 )
-CLS & ECHO Checking for youtube-dl updates . . .
+CLS & ECHO Checking for youtube-dl updates . . . & ECHO.
 "%~d0%~p0tools\youtube-dl.exe" --update --no-check-certificate
+ECHO. & ECHO Please wait . . .
+TIMEOUT /T 10 /NOBREAK>NUL
 EXIT /B
 
 :END
