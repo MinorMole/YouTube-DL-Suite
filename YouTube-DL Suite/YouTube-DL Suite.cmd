@@ -1,7 +1,7 @@
 @ECHO OFF & CLS
 SET DEBUG=False
-SET VERSION=2020.09.11
-SET USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36
+SET VERSION=2020.10.05
+SET USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36
 TITLE YouTube-DL Suite [%VERSION%]
 
 FOR /F %%a IN ('PowerShell -Command "Get-Date -format HHmmssffff"') DO SET TIMENOW=%%a
@@ -32,19 +32,21 @@ ECHO [1] Video ^(Archival^)
 ECHO [2] Audio
 ECHO [3] Audio ^(Archival^)
 ECHO [4] Live Streaming
-ECHO [5] Subtitle
-ECHO [6] Thumbnail
-ECHO [7] Listing Supported Websites
+ECHO [5] Download Live Streaming
+ECHO [6] Subtitle
+ECHO [7] Thumbnail
+ECHO [8] Listing Supported Websites
 ECHO.
-CHOICE /C 01234567 /N /M "Choose Mode:"
+CHOICE /C 012345678 /N /M "Choose Mode:"
 IF %ERRORLEVEL%==1 SET MODE=VIDEO
 IF %ERRORLEVEL%==2 SET MODE=VIDEO_ARCHIVAL
 IF %ERRORLEVEL%==3 SET MODE=AUDIO
 IF %ERRORLEVEL%==4 SET MODE=AUDIO_ARCHIVAL
 IF %ERRORLEVEL%==5 SET MODE=LIVE
-IF %ERRORLEVEL%==6 SET MODE=SUBTITLE
-IF %ERRORLEVEL%==7 SET MODE=THUMBNAIL
-IF %ERRORLEVEL%==8 CALL :LIST
+IF %ERRORLEVEL%==6 SET MODE=DOWNLOAD_LIVE
+IF %ERRORLEVEL%==7 SET MODE=SUBTITLE
+IF %ERRORLEVEL%==8 SET MODE=THUMBNAIL
+IF %ERRORLEVEL%==9 CALL :LIST
 
 IF %MODE%==VIDEO (
 	CALL :VIDEO_SELECTION
@@ -69,6 +71,9 @@ IF %MODE%==AUDIO_ARCHIVAL (
 IF %MODE%==LIVE (
 	CALL :LIVE_SELECTION
 )
+IF %MODE%==DOWNLOAD_LIVE (
+	CALL :DOWNLOAD_LIVE_SELECTION
+)
 IF %MODE%==SUBTITLE (
 	CALL :SUBTITLE
 ) ELSE (
@@ -89,23 +94,32 @@ IF %MODE%==VIDEO_ARCHIVAL CALL :VIDEO
 IF %MODE%==AUDIO CALL :AUDIO
 IF %MODE%==AUDIO_ARCHIVAL CALL :AUDIO
 IF %MODE%==LIVE CALL :LIVE
+IF %MODE%==DOWNLOAD_LIVE CALL :DOWNLOAD_LIVE
 IF %MODE%==SUBTITLE CALL :VIDEO
 IF %MODE%==THUMBNAIL CALL :VIDEO
 
 GOTO :END
 
 :VIDEO
-CLS & "%~d0%~p0tools\youtube-dl.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% %DELAY% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --fragment-retries infinite --console-title --yes-playlist %PLAYLIST_REVERSE% --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DATABASE% --add-metadata %SUBTITLE% %THUMBNAIL% %VIDEO_FORMAT% --batch-file %LINK% --output %SAVEPATH%	
+CLS & "%~d0%~p0tools\youtube-dl.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER_YTDL% %DELAY% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --fragment-retries infinite --console-title --yes-playlist %PLAYLIST_REVERSE% --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DATABASE% --add-metadata %SUBTITLE% %THUMBNAIL% %VIDEO_FORMAT% --batch-file %LINK% --output %SAVEPATH%	
 EXIT /B
 
 :AUDIO
-CLS & "%~d0%~p0tools\youtube-dl.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% %DELAY% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --fragment-retries infinite --console-title --yes-playlist %PLAYLIST_REVERSE% --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DATABASE% --add-metadata --extract-audio --audio-quality 0 --audio-format %AUDIO_FORMAT% -f "bestaudio[ext=webm]/bestaudio[ext=m4a]/bestaudio/best" --batch-file %LINK% --output %SAVEPATH%
+CLS & "%~d0%~p0tools\youtube-dl.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER_YTDL% %DELAY% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --fragment-retries infinite --console-title --yes-playlist %PLAYLIST_REVERSE% --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DATABASE% --add-metadata --extract-audio --audio-quality 0 --audio-format %AUDIO_FORMAT% -f "bestaudio[ext=webm]/bestaudio[ext=m4a]/bestaudio/best" --batch-file %LINK% --output %SAVEPATH%
 EXIT /B
 
 :LIVE
-CLS & "%~d0%~p0tools\youtube-dl.exe" %COOKIES_CMD% %LOGIN_CMD% %REFERER% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --no-playlist --simulate --get-filename --restrict-filenames --batch-file %LINK% --output "%%(uploader)s %%(title)s">"%TEMP%\%TIMENOW%_Title.txt"
+CLS & "%~d0%~p0tools\youtube-dl.exe" %COOKIES_CMD% %LOGIN_CMD% %REFERER_YTDL% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --no-playlist --simulate --get-filename --restrict-filenames --batch-file %LINK% --output "%%(uploader)s %%(title)s">"%TEMP%\%TIMENOW%_Title.txt"
 SET /P TITLE=<"%TEMP%\%TIMENOW%_Title.txt"
-START "%TITLE%" /HIGH CMD /Q /C ""%~d0%~p0tools\youtube-dl.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --skip-unavailable-fragments --no-playlist --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %LIVE_FORMAT% --output - --batch-file %LINK% | "%~d0%~p0tools\mpv\mpv.exe" - --title="%TITLE%" --cache-dir="%TEMP%" --no-border --ontop"
+START "%TITLE%" /HIGH CMD /Q /C ""%~d0%~p0tools\youtube-dl.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER_YTDL% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --skip-unavailable-fragments --no-playlist --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %LIVE_FORMAT% --output - --batch-file %LINK% | "%~d0%~p0tools\mpv\mpv.exe" - --title="%TITLE%" --cache-dir="%TEMP%" --no-border --ontop"
+EXIT /B
+
+:DOWNLOAD_LIVE
+CLS & "%~d0%~p0tools\youtube-dl.exe" %COOKIES_CMD% %LOGIN_CMD% %REFERER_YTDL% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --no-playlist --simulate --get-filename --restrict-filenames --batch-file %LINK% --output "%%(uploader)s %%(title)s">"%TEMP%\%TIMENOW%_Title.txt"
+SET /P TITLE=<"%TEMP%\%TIMENOW%_Title.txt"
+CLS & "%~d0%~p0tools\youtube-dl.exe" %COOKIES_CMD% %LOGIN_CMD% %REFERER_YTDL% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --no-playlist --get-url %DOWNLOAD_LIVE_FORMAT% --batch-file %LINK%>"%TEMP%\%TIMENOW%_Live.txt"
+SET /P LIVE=<"%TEMP%\%TIMENOW%_Live.txt"
+CLS & "%~d0%~p0tools\ffmpeg.exe" -y -protocol_whitelist crypto,file,http,https,tcp,tls -user_agent "%USER_AGENT%" %REFERER_FFMPEG% -i "%LIVE%" -codec copy "%~d0%~p0%TIMENOW%_%TITLE%.mp4"
 EXIT /B
 
 :PLAYLIST
@@ -156,8 +170,13 @@ CHOICE /C 01 /N /M "Choose Authorization Mode:"
 IF %ERRORLEVEL%==1 CALL :COOKIES_FORM
 IF %ERRORLEVEL%==2 CALL :LOGIN_FORM
 CLS & SET /P REFERER=Referer URL e.g. https://www.youtube.com (leave empty to skip): 
-IF DEFINED REFERER SET REFERER=--referer %REFERER%
-IF NOT %MODE%==LIVE CALL :DELAY
+IF DEFINED REFERER SET REFERER_YTDL=--referer %REFERER%
+IF DEFINED REFERER SET REFERER_FFMPEG=-referer "Referer: %REFERER%"
+IF NOT %MODE%==LIVE (
+	IF NOT %MODE%==DOWNLOAD_LIVE (
+		CALL :DELAY
+	)
+)
 EXIT /B
 
 :DELAY
@@ -246,11 +265,27 @@ ECHO [3] 1080p
 ECHO [4] 720p
 ECHO.
 CHOICE /C 01234 /N /M "Choose Live Mode:"
-IF %ERRORLEVEL%==1 SET LIVE_FORMAT=-f "bestvideo[ext=webm]+bestaudio[ext=webm]/bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio/best"
-IF %ERRORLEVEL%==2 SET LIVE_FORMAT=-f "bestvideo[ext=webm,height^<=?2160]+bestaudio[ext=webm]/bestvideo[ext=mp4,height^<=?2160]+bestaudio[ext=m4a]/bestvideo[height^<=?2160]+bestaudio/best[height^<=?2160]"
-IF %ERRORLEVEL%==3 SET LIVE_FORMAT=-f "bestvideo[ext=webm,height^<=?1440]+bestaudio[ext=webm]/bestvideo[ext=mp4,height^<=?1440]+bestaudio[ext=m4a]/bestvideo[height^<=?1440]+bestaudio/best[height^<=?1440]"
-IF %ERRORLEVEL%==4 SET LIVE_FORMAT=-f "bestvideo[ext=webm,height^<=?1080]+bestaudio[ext=webm]/bestvideo[ext=mp4,height^<=?1080]+bestaudio[ext=m4a]/bestvideo[height^<=?1080]+bestaudio/best[height^<=?1080]"
-IF %ERRORLEVEL%==5 SET LIVE_FORMAT=-f "bestvideo[ext=webm,height^<=?720]+bestaudio[ext=webm]/bestvideo[ext=mp4,height^<=?720]+bestaudio[ext=m4a]/bestvideo[height^<=?720]+bestaudio/best[height^<=?720]"
+IF %ERRORLEVEL%==1 SET LIVE_FORMAT=-f "bestvideo+bestaudio/best"
+IF %ERRORLEVEL%==2 SET LIVE_FORMAT=-f "bestvideo[height^<=?2160]+bestaudio/best[height^<=?2160]"
+IF %ERRORLEVEL%==3 SET LIVE_FORMAT=-f "bestvideo[height^<=?1440]+bestaudio/best[height^<=?1440]"
+IF %ERRORLEVEL%==4 SET LIVE_FORMAT=-f "bestvideo[height^<=?1080]+bestaudio/best[height^<=?1080]"
+IF %ERRORLEVEL%==5 SET LIVE_FORMAT=-f "bestvideo[height^<=?720]+bestaudio/best[height^<=?720]"
+EXIT /B
+
+:DOWNLOAD_LIVE_SELECTION
+CLS
+ECHO [0] Highest
+ECHO [1] 4K
+ECHO [2] 1440p
+ECHO [3] 1080p
+ECHO [4] 720p
+ECHO.
+CHOICE /C 01234 /N /M "Choose Live Download Mode:"
+IF %ERRORLEVEL%==1 SET DOWNLOAD_LIVE_FORMAT=-f "bestvideo+bestaudio/best"
+IF %ERRORLEVEL%==2 SET DOWNLOAD_LIVE_FORMAT=-f "bestvideo[height<=?2160]+bestaudio/best[height<=?2160]"
+IF %ERRORLEVEL%==3 SET DOWNLOAD_LIVE_FORMAT=-f "bestvideo[height<=?1440]+bestaudio/best[height<=?1440]"
+IF %ERRORLEVEL%==4 SET DOWNLOAD_LIVE_FORMAT=-f "bestvideo[height<=?1080]+bestaudio/best[height<=?1080]"
+IF %ERRORLEVEL%==5 SET DOWNLOAD_LIVE_FORMAT=-f "bestvideo[height<=?720]+bestaudio/best[height<=?720]"
 EXIT /B
 
 :SUBTITLE
