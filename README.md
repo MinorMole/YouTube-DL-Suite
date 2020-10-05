@@ -16,6 +16,7 @@
 - Download Subtitle
 - Download Thumbnail
 - Live Streaming with an [**mpv**](https://mpv.io)
+- Download Live Streaming with an [**FFmpeg**](https://ffmpeg.org)
 - Extractor Listing Mode
 - Playlist Extraction Format Presets
 - Full Authorization (Login, Cookie, Referrer, and User-Agent)
