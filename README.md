@@ -10,13 +10,13 @@
 
 - Fully Portable with Everything you ever need for [**youtube-dl**](https://youtube-dl.org)
 - Download Video
-- Download Audio
+- Download Audio Only
 - Video Archival Mode
-- Audio Archival Mode
+- Audio Only Archival Mode
 - Download Subtitle
 - Download Thumbnail
-- Live Streaming with an [**mpv**](https://mpv.io)
 - Download Live Streaming with an [**FFmpeg**](https://ffmpeg.org)
+- Watch Live Streaming with an [**mpv**](https://mpv.io)
 - Extractor Listing Mode
 - Playlist Extraction Format Presets
 - Full Authorization (Login, Cookie, Referrer, and User-Agent)
