@@ -52,6 +52,11 @@
 - Yes, with authorization you can download a member-only video or paid program.
 - Please do not re-upload the video or redistribute them publicly if you don't have a right to do so.
 
+## ⚠ Warning ⚠
+
+- Don't select text on the console while it running, it'll pause the console, and video will be lost during a pause. If you don't want unintentionally pause the console, you can disable the QuickEdit by following this [**instruction**](https://stackoverflow.com/questions/37578529/disable-quickedit-in-windows-10-cmd-exe?answertab=votes#tab-top).
+- When you use cookie authorization make sure you keep your cookies.txt on an uncompromised computer.
+
 ## Licence
 
 [**The Unlicense.**](https://github.com/MinorMole/YouTube-DL-Suite/blob/master/LICENSE)
