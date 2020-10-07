@@ -1,7 +1,7 @@
 @ECHO OFF & CLS
 SET DEBUG=False
-SET VERSION=2020.10.07
-SET USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36
+SET VERSION=2020.10.08
+SET USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36
 TITLE YouTube-DL Suite [%VERSION%]
 
 FOR /F %%a IN ('PowerShell -Command "Get-Date -format HHmmssffff"') DO SET TIMENOW=%%a
@@ -86,7 +86,10 @@ IF %MODE%==SUBTITLE (
 )
 
 :AUTH
-CLS & CHOICE /C yn /M "Authorization Requirements"
+CLS
+ECHO Authorization is necessary when the link is not publicly available or age restriction.
+ECHO.
+CHOICE /C yn /M "Authorization Requirements"
 IF %ERRORLEVEL%==1 CALL :AUTH_MODE
 
 IF %MODE%==VIDEO CALL :VIDEO
@@ -109,7 +112,7 @@ CLS & "%~d0%~p0tools\youtube-dl.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERE
 EXIT /B
 
 :DOWNLOAD_LIVE
-CLS & TITLE youtube-dl - Live Stream Downloading ^(Please wait until this window close by itself^) & "%~d0%~p0tools\youtube-dl.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --keep-video --no-part --no-post-overwrites --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DOWNLOAD_LIVE_FORMAT% --batch-file %LINK% --output "%~d0%~p0%%(title)s.%%(ext)s"
+CLS & TITLE youtube-dl - Live Stream Downloading ^(Please wait until the console closes automatically^) & "%~d0%~p0tools\youtube-dl.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --keep-video --no-part --no-post-overwrites --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DOWNLOAD_LIVE_FORMAT% --batch-file %LINK% --output "%~d0%~p0%%(title)s.%%(ext)s"
 EXIT /B
 
 :LIVE
@@ -329,8 +332,7 @@ IF "%VERSION%"=="%VERSION_CHECK%" (
 )
 CLS & ECHO Checking for youtube-dl updates . . . & ECHO.
 "%~d0%~p0tools\youtube-dl.exe" --update --no-check-certificate
-ECHO. & ECHO Please wait . . .
-TIMEOUT /T 10 /NOBREAK>NUL
+IF EXIST "%~d0%~p0tools\youtube-dl-updater.bat" TIMEOUT /T 6 /NOBREAK>NUL
 EXIT /B
 
 :END
