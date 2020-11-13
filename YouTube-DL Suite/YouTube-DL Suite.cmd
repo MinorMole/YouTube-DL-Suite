@@ -1,7 +1,7 @@
 @ECHO OFF & CLS
 SET DEBUG=False
-SET VERSION=2020.10.08
-SET USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36
+SET VERSION=2020.11.13
+SET USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36
 TITLE YouTube-DL Suite [%VERSION%]
 
 FOR /F %%a IN ('PowerShell -Command "Get-Date -format HHmmssffff"') DO SET TIMENOW=%%a
@@ -184,7 +184,7 @@ IF %ERRORLEVEL%==1 SET DELAY=--min-sleep-interval 60 --max-sleep-interval 180
 EXIT /B
 
 :COOKIES_FORM
-CLS & ECHO Install this extension to get cookies.txt of your account: & ECHO. & ECHO  https://chrome.google.com/webstore/detail/cookiestxt/njabckikapfpffapmjgojcnbfjonfjfg & ECHO.
+CLS & ECHO Install this extension to get cookies.txt of your account: & ECHO. & ECHO https://chrome.google.com/webstore/detail/get-cookiestxt/bgaddhkoddajcdgocldbbfleckgcbcid & ECHO.
 SET /P COOKIES_PATH=Drag and Drop cookies.txt Here to Get Path: 
 CALL :COOKIES_CHECK %COOKIES_PATH%
 SET COOKIES_CMD=--cookies %COOKIES_PATH%
