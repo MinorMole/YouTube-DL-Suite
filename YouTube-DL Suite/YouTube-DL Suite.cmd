@@ -1,7 +1,7 @@
 @ECHO OFF & CLS
 SET DEBUG=False
-SET VERSION=2020.11.13
-SET USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36
+SET VERSION=2021.12.18
+SET USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36
 TITLE YouTube-DL Suite [%VERSION%]
 
 FOR /F %%a IN ('PowerShell -Command "Get-Date -format HHmmssffff"') DO SET TIMENOW=%%a
@@ -22,7 +22,7 @@ IF "%~1"=="" (
 		GOTO :END
 	)
 )
-TASKLIST /FI "IMAGENAME EQ youtube-dl.exe" 2>NUL | FIND /I /N "youtube-dl.exe">NUL
+TASKLIST /FI "IMAGENAME EQ yt-dlp.exe" 2>NUL | FIND /I /N "yt-dlp.exe">NUL
 IF NOT %ERRORLEVEL%==0 CALL :DAILY_CHECK_UPDATE
 
 :MODE
@@ -81,6 +81,7 @@ IF %MODE%==SUBTITLE (
 		SET THUMBNAIL=--skip-download --write-thumbnail
 		SET SAVEPATH="%~d0%~p0%%(title)s.%%(ext)s"
 	) ELSE (
+		SET THUMBNAIL=--embed-thumbnail
 		SET SUBTITLE=--all-subs --embed-subs --sub-format best --convert-subs srt
 	)
 )
@@ -104,21 +105,21 @@ IF %MODE%==THUMBNAIL CALL :VIDEO
 GOTO :END
 
 :VIDEO
-CLS & "%~d0%~p0tools\youtube-dl.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% %DELAY% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --fragment-retries infinite --console-title --yes-playlist %PLAYLIST_REVERSE% --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DATABASE% --add-metadata %SUBTITLE% %THUMBNAIL% %VIDEO_FORMAT% --batch-file %LINK% --output %SAVEPATH%	
+CLS & "%~d0%~p0tools\yt-dlp.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% %DELAY% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --fragment-retries infinite --console-title --yes-playlist %PLAYLIST_REVERSE% --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DATABASE% --add-metadata %SUBTITLE% %THUMBNAIL% %VIDEO_FORMAT% --batch-file %LINK% --output %SAVEPATH%	
 EXIT /B
 
 :AUDIO
-CLS & "%~d0%~p0tools\youtube-dl.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% %DELAY% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --fragment-retries infinite --console-title --yes-playlist %PLAYLIST_REVERSE% --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DATABASE% --add-metadata --extract-audio --audio-quality 0 --audio-format %AUDIO_FORMAT% -f "bestaudio[ext=webm]/bestaudio[ext=m4a]/bestaudio/best" --batch-file %LINK% --output %SAVEPATH%
+CLS & "%~d0%~p0tools\yt-dlp.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% %DELAY% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --fragment-retries infinite --console-title --yes-playlist %PLAYLIST_REVERSE% --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DATABASE% --add-metadata --extract-audio --audio-quality 0 --audio-format %AUDIO_FORMAT% -f "bestaudio[ext=webm]/bestaudio[ext=m4a]/bestaudio/best" --batch-file %LINK% --output %SAVEPATH%
 EXIT /B
 
 :DOWNLOAD_LIVE
-CLS & TITLE youtube-dl - Live Stream Downloading ^(Please wait until the console closes automatically^) & "%~d0%~p0tools\youtube-dl.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --keep-video --no-part --no-post-overwrites --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DOWNLOAD_LIVE_FORMAT% --batch-file %LINK% --output "%~d0%~p0%%(title)s.%%(ext)s"
+CLS & TITLE youtube-dl - Live Stream Downloading ^(Please wait until the console closes automatically^) & "%~d0%~p0tools\yt-dlp.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --keep-video --no-part --no-post-overwrites --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DOWNLOAD_LIVE_FORMAT% --batch-file %LINK% --output "%~d0%~p0%%(title)s.%%(ext)s"
 EXIT /B
 
 :LIVE
-CLS & "%~d0%~p0tools\youtube-dl.exe" %COOKIES_CMD% %LOGIN_CMD% %REFERER% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --no-playlist --simulate --get-filename --restrict-filenames --batch-file %LINK% --output "%%(uploader)s %%(title)s">"%TEMP%\%TIMENOW%_Title.txt"
+CLS & "%~d0%~p0tools\yt-dlp.exe" %COOKIES_CMD% %LOGIN_CMD% %REFERER% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --no-playlist --simulate --get-filename --restrict-filenames --batch-file %LINK% --output "%%(uploader)s %%(title)s">"%TEMP%\%TIMENOW%_Title.txt"
 SET /P TITLE=<"%TEMP%\%TIMENOW%_Title.txt"
-START "%TITLE%" /HIGH CMD /Q /C ""%~d0%~p0tools\youtube-dl.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --skip-unavailable-fragments --no-playlist --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %LIVE_FORMAT% --output - --batch-file %LINK% | "%~d0%~p0tools\mpv\mpv.exe" - --title="%TITLE%" --cache-dir="%TEMP%" --no-border --ontop"
+START "%TITLE%" /HIGH CMD /Q /C ""%~d0%~p0tools\yt-dlp.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --skip-unavailable-fragments --no-playlist --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %LIVE_FORMAT% --output - --batch-file %LINK% | "%~d0%~p0tools\mpv\mpv.exe" - --title="%TITLE%" --cache-dir="%TEMP%" --no-border --ontop"
 EXIT /B
 
 :PLAYLIST
@@ -228,8 +229,6 @@ IF %ERRORLEVEL%==7 SET VIDEO_FORMAT=--merge-output-format mp4 -f "bestvideo[ext=
 IF %ERRORLEVEL%==8 SET VIDEO_FORMAT=--merge-output-format mp4 -f "bestvideo[ext=mp4,height<=?1440]+bestaudio[ext=m4a]/bestvideo[height<=?1440]+bestaudio/best[height<=?1440]"
 IF %ERRORLEVEL%==9 SET VIDEO_FORMAT=--merge-output-format mp4 -f "bestvideo[ext=mp4,height<=?1080]+bestaudio[ext=m4a]/bestvideo[height<=?1080]+bestaudio/best[height<=?1080]"
 IF %ERRORLEVEL%==10 SET VIDEO_FORMAT=--merge-output-format mp4 -f "bestvideo[ext=mp4,height<=?720]+bestaudio[ext=m4a]/bestvideo[height<=?720]+bestaudio/best[height<=?720]"
-CLS & CHOICE /C yn /M "Download Thumbnail"
-IF %ERRORLEVEL%==1 SET THUMBNAIL=--write-thumbnail
 EXIT /B
 
 :AUDIO_SELECTION
@@ -308,7 +307,7 @@ SET SAVEPATH="%~d0%~p0%%(title)s.%%(ext)s"
 EXIT /B
 
 :LIST
-"%~d0%~p0tools\youtube-dl.exe" --extractor-descriptions>"%TEMP%\YouTube-DL Supported Websites"
+"%~d0%~p0tools\yt-dlp.exe" --extractor-descriptions>"%TEMP%\YouTube-DL Supported Websites"
 START "YouTube-DL Supported Websites" /B Notepad "%TEMP%\YouTube-DL Supported Websites"
 GOTO :MODE
 
@@ -330,8 +329,8 @@ IF "%VERSION%"=="%VERSION_CHECK%" (
 	START https://github.com/MinorMole/YouTube-DL-Suite/releases/latest
 	GOTO :END
 )
-CLS & ECHO Checking for youtube-dl updates . . . & ECHO.
-"%~d0%~p0tools\youtube-dl.exe" --update --no-check-certificate
+CLS & ECHO Checking for yt-dlp updates . . . & ECHO.
+"%~d0%~p0tools\yt-dlp.exe" --update --no-check-certificate
 IF EXIST "%~d0%~p0tools\youtube-dl-updater.bat" TIMEOUT /T 6 /NOBREAK>NUL
 EXIT /B
 
