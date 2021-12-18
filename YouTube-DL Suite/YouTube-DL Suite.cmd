@@ -1,6 +1,6 @@
 @ECHO OFF & CLS
 SET DEBUG=False
-SET VERSION=2021.12.18
+SET VERSION=2021.12.19
 SET USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36
 TITLE YouTube-DL Suite [%VERSION%]
 
@@ -78,11 +78,11 @@ IF %MODE%==SUBTITLE (
 	CALL :SUBTITLE
 ) ELSE (
 	IF %MODE%==THUMBNAIL (
-		SET THUMBNAIL=--skip-download --write-thumbnail
+		SET THUMBNAIL=--skip-download --write-thumbnail --convert-thumbnails png
 		SET SAVEPATH="%~d0%~p0%%(title)s.%%(ext)s"
 	) ELSE (
 		SET THUMBNAIL=--embed-thumbnail
-		SET SUBTITLE=--all-subs --embed-subs --sub-format best --convert-subs srt
+		SET SUBTITLE=--all-subs --embed-subs --sub-format best
 	)
 )
 
@@ -105,21 +105,21 @@ IF %MODE%==THUMBNAIL CALL :VIDEO
 GOTO :END
 
 :VIDEO
-CLS & "%~d0%~p0tools\yt-dlp.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% %DELAY% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --fragment-retries infinite --console-title --yes-playlist %PLAYLIST_REVERSE% --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DATABASE% --add-metadata %SUBTITLE% %THUMBNAIL% %VIDEO_FORMAT% --batch-file %LINK% --output %SAVEPATH%	
+CLS & "%~d0%~p0tools\yt-dlp.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% %DELAY% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass -i --ignore-config --no-warnings --fragment-retries infinite --console-title --yes-playlist %PLAYLIST_REVERSE% --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DATABASE% --embed-metadata %SUBTITLE% %THUMBNAIL% %VIDEO_FORMAT% -a %LINK% -o %SAVEPATH%	
 EXIT /B
 
 :AUDIO
-CLS & "%~d0%~p0tools\yt-dlp.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% %DELAY% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --fragment-retries infinite --console-title --yes-playlist %PLAYLIST_REVERSE% --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DATABASE% --add-metadata --extract-audio --audio-quality 0 --audio-format %AUDIO_FORMAT% -f "bestaudio[ext=webm]/bestaudio[ext=m4a]/bestaudio/best" --batch-file %LINK% --output %SAVEPATH%
+CLS & "%~d0%~p0tools\yt-dlp.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% %DELAY% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass -i --ignore-config --no-warnings --fragment-retries infinite --console-title --yes-playlist %PLAYLIST_REVERSE% --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DATABASE% --embed-metadata --extract-audio --audio-quality 0 --audio-format %AUDIO_FORMAT% -f "ba[ext=webm]/ba[ext=m4a]/ba/b" -a %LINK% -o %SAVEPATH%
 EXIT /B
 
 :DOWNLOAD_LIVE
-CLS & TITLE youtube-dl - Live Stream Downloading ^(Please wait until the console closes automatically^) & "%~d0%~p0tools\yt-dlp.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --keep-video --no-part --no-post-overwrites --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DOWNLOAD_LIVE_FORMAT% --batch-file %LINK% --output "%~d0%~p0%%(title)s.%%(ext)s"
+CLS & TITLE youtube-dl - Live Stream Downloading ^(Please wait until the console closes automatically^) & "%~d0%~p0tools\yt-dlp.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass -i --ignore-config --no-warnings --keep-video --no-part --no-post-overwrites --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DOWNLOAD_LIVE_FORMAT% -a %LINK% -o "%~d0%~p0%%(title)s.%%(ext)s"
 EXIT /B
 
 :LIVE
-CLS & "%~d0%~p0tools\yt-dlp.exe" %COOKIES_CMD% %LOGIN_CMD% %REFERER% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --no-playlist --simulate --get-filename --restrict-filenames --batch-file %LINK% --output "%%(uploader)s %%(title)s">"%TEMP%\%TIMENOW%_Title.txt"
+CLS & "%~d0%~p0tools\yt-dlp.exe" %COOKIES_CMD% %LOGIN_CMD% %REFERER% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass -i --ignore-config --no-warnings --no-playlist --simulate --get-filename --restrict-filenames -a %LINK% -o "%%(uploader)s %%(title)s">"%TEMP%\%TIMENOW%_Title.txt"
 SET /P TITLE=<"%TEMP%\%TIMENOW%_Title.txt"
-START "%TITLE%" /HIGH CMD /Q /C ""%~d0%~p0tools\yt-dlp.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass --ignore-errors --ignore-config --no-warnings --skip-unavailable-fragments --no-playlist --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %LIVE_FORMAT% --output - --batch-file %LINK% | "%~d0%~p0tools\mpv\mpv.exe" - --title="%TITLE%" --cache-dir="%TEMP%" --no-border --ontop"
+START "%TITLE%" /HIGH CMD /Q /C ""%~d0%~p0tools\yt-dlp.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass -i --ignore-config --no-warnings --skip-unavailable-fragments --no-playlist --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %LIVE_FORMAT% -o - -a %LINK% | "%~d0%~p0tools\mpv\mpv.exe" - --title="%TITLE%" --cache-dir="%TEMP%" --no-border --ontop"
 EXIT /B
 
 :PLAYLIST
@@ -219,16 +219,16 @@ ECHO [8] Compatibility (1080p)
 ECHO [9] Compatibility (720p)
 ECHO.
 CHOICE /C 0123456789 /N /M "Choose Video Mode:"
-IF %ERRORLEVEL%==1 SET VIDEO_FORMAT=--merge-output-format mkv -f "bestvideo[ext=webm]+bestaudio[ext=webm]/bestvideo+bestaudio/best"
-IF %ERRORLEVEL%==2 SET VIDEO_FORMAT=--merge-output-format mkv -f "bestvideo[ext=webm,height<=?2160]+bestaudio[ext=webm]/bestvideo[height<=?2160]+bestaudio/best[height<=?2160]"
-IF %ERRORLEVEL%==3 SET VIDEO_FORMAT=--merge-output-format mkv -f "bestvideo[ext=webm,height<=?1440]+bestaudio[ext=webm]/bestvideo[height<=?1440]+bestaudio/best[height<=?1440]"
-IF %ERRORLEVEL%==4 SET VIDEO_FORMAT=--merge-output-format mkv -f "bestvideo[ext=webm,height<=?1080]+bestaudio[ext=webm]/bestvideo[height<=?1080]+bestaudio/best[height<=?1080]"
-IF %ERRORLEVEL%==5 SET VIDEO_FORMAT=--merge-output-format mkv -f "bestvideo[ext=webm,height<=?720]+bestaudio[ext=webm]/bestvideo[height<=?720]+bestaudio/best[height<=?720]"
-IF %ERRORLEVEL%==6 SET VIDEO_FORMAT=--merge-output-format mp4 -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio/best"
-IF %ERRORLEVEL%==7 SET VIDEO_FORMAT=--merge-output-format mp4 -f "bestvideo[ext=mp4,height<=?2160]+bestaudio[ext=m4a]/bestvideo[height<=?2160]+bestaudio/best[height<=?2160]"
-IF %ERRORLEVEL%==8 SET VIDEO_FORMAT=--merge-output-format mp4 -f "bestvideo[ext=mp4,height<=?1440]+bestaudio[ext=m4a]/bestvideo[height<=?1440]+bestaudio/best[height<=?1440]"
-IF %ERRORLEVEL%==9 SET VIDEO_FORMAT=--merge-output-format mp4 -f "bestvideo[ext=mp4,height<=?1080]+bestaudio[ext=m4a]/bestvideo[height<=?1080]+bestaudio/best[height<=?1080]"
-IF %ERRORLEVEL%==10 SET VIDEO_FORMAT=--merge-output-format mp4 -f "bestvideo[ext=mp4,height<=?720]+bestaudio[ext=m4a]/bestvideo[height<=?720]+bestaudio/best[height<=?720]"
+IF %ERRORLEVEL%==1 SET VIDEO_FORMAT=--merge-output-format mkv -f "bv[ext=webm]+ba[ext=webm]/bv+ba/b"
+IF %ERRORLEVEL%==2 SET VIDEO_FORMAT=--merge-output-format mkv -f "bv[ext=webm][height<=?2160]+ba[ext=webm]/bv[height<=?2160]+ba/b[height<=?2160]"
+IF %ERRORLEVEL%==3 SET VIDEO_FORMAT=--merge-output-format mkv -f "bv[ext=webm][height<=?1440]+ba[ext=webm]/bv[height<=?1440]+ba/b[height<=?1440]"
+IF %ERRORLEVEL%==4 SET VIDEO_FORMAT=--merge-output-format mkv -f "bv[ext=webm][height<=?1080]+ba[ext=webm]/bv[height<=?1080]+ba/b[height<=?1080]"
+IF %ERRORLEVEL%==5 SET VIDEO_FORMAT=--merge-output-format mkv -f "bv[ext=webm][height<=?720]+ba[ext=webm]/bv[height<=?720]+ba/b[height<=?720]"
+IF %ERRORLEVEL%==6 SET VIDEO_FORMAT=--merge-output-format mp4 -f "bv[ext=mp4]+ba[ext=m4a]/bv+ba/b"
+IF %ERRORLEVEL%==7 SET VIDEO_FORMAT=--merge-output-format mp4 -f "bv[ext=mp4][height<=?2160]+ba[ext=m4a]/bv[height<=?2160]+ba/b[height<=?2160]"
+IF %ERRORLEVEL%==8 SET VIDEO_FORMAT=--merge-output-format mp4 -f "bv[ext=mp4][height<=?1440]+ba[ext=m4a]/bv[height<=?1440]+ba/b[height<=?1440]"
+IF %ERRORLEVEL%==9 SET VIDEO_FORMAT=--merge-output-format mp4 -f "bv[ext=mp4][height<=?1080]+ba[ext=m4a]/bv[height<=?1080]+ba/b[height<=?1080]"
+IF %ERRORLEVEL%==10 SET VIDEO_FORMAT=--merge-output-format mp4 -f "bv[ext=mp4][height<=?720]+ba[ext=m4a]/bv[height<=?720]+ba/b[height<=?720]"
 EXIT /B
 
 :AUDIO_SELECTION
@@ -262,11 +262,11 @@ ECHO [3] 1080p
 ECHO [4] 720p
 ECHO.
 CHOICE /C 01234 /N /M "Choose Live Download Mode:"
-IF %ERRORLEVEL%==1 SET DOWNLOAD_LIVE_FORMAT=-f "bestvideo+bestaudio/best"
-IF %ERRORLEVEL%==2 SET DOWNLOAD_LIVE_FORMAT=-f "bestvideo[height<=?2160]+bestaudio/best[height<=?2160]"
-IF %ERRORLEVEL%==3 SET DOWNLOAD_LIVE_FORMAT=-f "bestvideo[height<=?1440]+bestaudio/best[height<=?1440]"
-IF %ERRORLEVEL%==4 SET DOWNLOAD_LIVE_FORMAT=-f "bestvideo[height<=?1080]+bestaudio/best[height<=?1080]"
-IF %ERRORLEVEL%==5 SET DOWNLOAD_LIVE_FORMAT=-f "bestvideo[height<=?720]+bestaudio/best[height<=?720]"
+IF %ERRORLEVEL%==1 SET DOWNLOAD_LIVE_FORMAT=-f "bv+ba/b"
+IF %ERRORLEVEL%==2 SET DOWNLOAD_LIVE_FORMAT=-f "bv[height<=?2160]+ba/b[height<=?2160]"
+IF %ERRORLEVEL%==3 SET DOWNLOAD_LIVE_FORMAT=-f "bv[height<=?1440]+ba/b[height<=?1440]"
+IF %ERRORLEVEL%==4 SET DOWNLOAD_LIVE_FORMAT=-f "bv[height<=?1080]+ba/b[height<=?1080]"
+IF %ERRORLEVEL%==5 SET DOWNLOAD_LIVE_FORMAT=-f "bv[height<=?720]+ba/b[height<=?720]"
 EXIT /B
 
 :LIVE_SELECTION
@@ -278,11 +278,11 @@ ECHO [3] 1080p
 ECHO [4] 720p
 ECHO.
 CHOICE /C 01234 /N /M "Choose Live Mode:"
-IF %ERRORLEVEL%==1 SET LIVE_FORMAT=-f "bestvideo+bestaudio/best"
-IF %ERRORLEVEL%==2 SET LIVE_FORMAT=-f "bestvideo[height^<=?2160]+bestaudio/best[height^<=?2160]"
-IF %ERRORLEVEL%==3 SET LIVE_FORMAT=-f "bestvideo[height^<=?1440]+bestaudio/best[height^<=?1440]"
-IF %ERRORLEVEL%==4 SET LIVE_FORMAT=-f "bestvideo[height^<=?1080]+bestaudio/best[height^<=?1080]"
-IF %ERRORLEVEL%==5 SET LIVE_FORMAT=-f "bestvideo[height^<=?720]+bestaudio/best[height^<=?720]"
+IF %ERRORLEVEL%==1 SET LIVE_FORMAT=-f "bv+ba/b"
+IF %ERRORLEVEL%==2 SET LIVE_FORMAT=-f "bv[height^<=?2160]+ba/b[height^<=?2160]"
+IF %ERRORLEVEL%==3 SET LIVE_FORMAT=-f "bv[height^<=?1440]+ba/b[height^<=?1440]"
+IF %ERRORLEVEL%==4 SET LIVE_FORMAT=-f "bv[height^<=?1080]+ba/b[height^<=?1080]"
+IF %ERRORLEVEL%==5 SET LIVE_FORMAT=-f "bv[height^<=?720]+ba/b[height^<=?720]"
 EXIT /B
 
 :SUBTITLE
@@ -302,7 +302,7 @@ IF DEFINED SUBTITLE_LANGUAGE (
 )
 CLS & CHOICE /C yn /M "Download YouTube's Automatically Generated Subtitle"
 IF %ERRORLEVEL%==1 SET SUBTITLE_AUTO=--write-auto-sub
-SET SUBTITLE=--skip-download --write-sub --sub-format best %SUBTITLE_AUTO% %SUBTITLE_LANGUAGE%
+SET SUBTITLE=--skip-download --write-sub --sub-format best --convert-subs ass %SUBTITLE_AUTO% %SUBTITLE_LANGUAGE%
 SET SAVEPATH="%~d0%~p0%%(title)s.%%(ext)s"
 EXIT /B
 
@@ -330,7 +330,7 @@ IF "%VERSION%"=="%VERSION_CHECK%" (
 	GOTO :END
 )
 CLS & ECHO Checking for yt-dlp updates . . . & ECHO.
-"%~d0%~p0tools\yt-dlp.exe" --update --no-check-certificate
+"%~d0%~p0tools\yt-dlp.exe" -U --no-check-certificate
 IF EXIST "%~d0%~p0tools\youtube-dl-updater.bat" TIMEOUT /T 6 /NOBREAK>NUL
 EXIT /B
 
