@@ -1,7 +1,7 @@
 @ECHO OFF & CLS
 SET DEBUG=False
-SET VERSION=2021.12.19
-SET USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36
+SET VERSION=2022.07.27
+SET USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36
 TITLE YouTube-DL Suite [%VERSION%]
 
 FOR /F %%a IN ('PowerShell -Command "Get-Date -format HHmmssffff"') DO SET TIMENOW=%%a
@@ -46,7 +46,7 @@ IF %ERRORLEVEL%==5 SET MODE=DOWNLOAD_LIVE
 IF %ERRORLEVEL%==6 SET MODE=LIVE
 IF %ERRORLEVEL%==7 SET MODE=SUBTITLE
 IF %ERRORLEVEL%==8 SET MODE=THUMBNAIL
-IF %ERRORLEVEL%==9 CALL :LIST
+IF %ERRORLEVEL%==9 CALL :LIST_WEBSITE
 
 IF %MODE%==VIDEO (
 	CALL :VIDEO_SELECTION
@@ -76,10 +76,11 @@ IF %MODE%==LIVE (
 )
 IF %MODE%==SUBTITLE (
 	CALL :SUBTITLE
+	CALL :PLAYLIST
 ) ELSE (
 	IF %MODE%==THUMBNAIL (
 		SET THUMBNAIL=--skip-download --write-thumbnail --convert-thumbnails png
-		SET SAVEPATH="%~d0%~p0%%(title)s.%%(ext)s"
+		CALL :PLAYLIST
 	) ELSE (
 		SET THUMBNAIL=--embed-thumbnail
 		SET SUBTITLE=--all-subs --embed-subs --sub-format best
@@ -105,11 +106,11 @@ IF %MODE%==THUMBNAIL CALL :VIDEO
 GOTO :END
 
 :VIDEO
-CLS & "%~d0%~p0tools\yt-dlp.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% %DELAY% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass -i --ignore-config --no-warnings --fragment-retries infinite --console-title --yes-playlist %PLAYLIST_REVERSE% --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DATABASE% --embed-metadata %SUBTITLE% %THUMBNAIL% %VIDEO_FORMAT% -a %LINK% -o %SAVEPATH%	
+CLS & "%~d0%~p0tools\yt-dlp.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% %DELAY% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass -i --ignore-config --no-warnings --fragment-retries infinite --console-title --yes-playlist %PLAYLIST_REVERSE% --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DATABASE% --embed-metadata %SUBTITLE% %THUMBNAIL% %VIDEO_FORMAT% -a %LINK% -o %SAVE_PATH%	
 EXIT /B
 
 :AUDIO
-CLS & "%~d0%~p0tools\yt-dlp.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% %DELAY% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass -i --ignore-config --no-warnings --fragment-retries infinite --console-title --yes-playlist %PLAYLIST_REVERSE% --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DATABASE% --embed-metadata --extract-audio --audio-quality 0 --audio-format %AUDIO_FORMAT% -f "ba[ext=webm]/ba[ext=m4a]/ba/b" -a %LINK% -o %SAVEPATH%
+CLS & "%~d0%~p0tools\yt-dlp.exe" %VERBOSE% %COOKIES_CMD% %LOGIN_CMD% %REFERER% %DELAY% --user-agent "%USER_AGENT%" --no-check-certificate --geo-bypass -i --ignore-config --no-warnings --fragment-retries infinite --console-title --yes-playlist %PLAYLIST_REVERSE% --prefer-ffmpeg --ffmpeg-location "%~d0%~p0tools\ffmpeg.exe" %DATABASE% --embed-metadata --extract-audio --audio-quality 0 --audio-format %AUDIO_FORMAT% -f "ba[ext=webm]/ba[ext=m4a]/ba/b" -a %LINK% -o %SAVE_PATH%
 EXIT /B
 
 :DOWNLOAD_LIVE
@@ -127,37 +128,81 @@ CLS
 ECHO [0] Normal & ECHO. ^> Clip A.mkv & ECHO. ^> Clip B.mkv & ECHO.
 ECHO [1] Music Playlist & ECHO. ^> Album Name\#01 - Track A.mp3 & ECHO. ^> Album Name\#02 - Track B.mp3 & ECHO.
 ECHO [2] Series Playlist & ECHO. ^> Series Name\(01) Title A.mp4 & ECHO. ^> Series Name\(02) Title B.mp4 & ECHO.
-ECHO [3] Channel Playlist & ECHO. ^> Channel Name\[20200712] Clip A (P8OjkcLzYCM).mkv & ECHO. ^> Channel Name\[20200730] Clip B (MvlgyKTSSEA).mkv & ECHO.
-CHOICE /C 0123 /N /M "Choose Playlist Extraction Format:"
+ECHO [3] Channel Playlist & ECHO. ^> Channel Name\[20200712] Clip A.mkv & ECHO. ^> Channel Name\[20200730] Clip B.mkv & ECHO.
+ECHO [4] Channel Playlist with ID & ECHO. ^> Channel Name\[20200712] Clip A (P8OjkcLzYCM).mkv & ECHO. ^> Channel Name\[20200730] Clip B (MvlgyKTSSEA).mkv & ECHO.
+ECHO [5] Bilibili Playlist & ECHO. ^> Playlist Title - E1 - Episode Name.mkv & ECHO. ^> Playlist Title - E2 - Episode Name.mkv & ECHO.
+ECHO [6] Custom Playlist & ECHO.
+CHOICE /C 0123456 /N /M "Choose Playlist Extraction Format:"
 IF %ERRORLEVEL%==1 (
 	SET PLAYLIST_REVERSE=--playlist-reverse
 	IF "%ARCHIVAL%"=="True" (
-		SET SAVEPATH="%~d0%~p0Archive\%%(uploader)s\%%(title)s.%%(ext)s"
+		SET SAVE_PATH="%~d0%~p0Archive\%%(uploader)s\%%(title)s.%%(ext)s"
 	) ELSE (
-		SET SAVEPATH="%~d0%~p0%%(title)s.%%(ext)s"
+		SET SAVE_PATH="%~d0%~p0%%(title)s.%%(ext)s"
 	)
 )
 IF %ERRORLEVEL%==2 (
 	IF "%ARCHIVAL%"=="True" (
-		SET SAVEPATH="%~d0%~p0Archive\%%(uploader)s\%%(playlist)s\#%%(playlist_index)s - %%(title)s.%%(ext)s"
+		SET SAVE_PATH="%~d0%~p0Archive\%%(uploader)s\%%(playlist)s\#%%(playlist_index)s - %%(title)s.%%(ext)s"
 	) ELSE (
-		SET SAVEPATH="%~d0%~p0%%(playlist)s\#%%(playlist_index)s - %%(title)s.%%(ext)s"
+		SET SAVE_PATH="%~d0%~p0%%(playlist)s\#%%(playlist_index)s - %%(title)s.%%(ext)s"
 	)
 )
 IF %ERRORLEVEL%==3 (
 	IF "%ARCHIVAL%"=="True" (
-		SET SAVEPATH="%~d0%~p0Archive\%%(uploader)s\%%(playlist)s\(%%(playlist_index)s) %%(title)s.%%(ext)s"
+		SET SAVE_PATH="%~d0%~p0Archive\%%(uploader)s\%%(playlist)s\(%%(playlist_index)s) %%(title)s.%%(ext)s"
 	) ELSE (
-		SET SAVEPATH="%~d0%~p0%%(playlist)s\(%%(playlist_index)s) %%(title)s.%%(ext)s"
+		SET SAVE_PATH="%~d0%~p0%%(playlist)s\(%%(playlist_index)s) %%(title)s.%%(ext)s"
 	)
 )
 IF %ERRORLEVEL%==4 (
 	SET PLAYLIST_REVERSE=--playlist-reverse
 	IF "%ARCHIVAL%"=="True" (
-		SET SAVEPATH="%~d0%~p0Archive\%%(uploader)s\[%%(upload_date)s] %%(title)s (%%(id)s).%%(ext)s"
+		SET SAVE_PATH="%~d0%~p0Archive\%%(uploader)s\[%%(upload_date)s] %%(title)s.%%(ext)s"
 	) ELSE (
-		SET SAVEPATH="%~d0%~p0%%(uploader)s\[%%(upload_date)s] %%(title)s (%%(id)s).%%(ext)s"
+		SET SAVE_PATH="%~d0%~p0%%(uploader)s\[%%(upload_date)s] %%(title)s.%%(ext)s"
 	)
+)
+IF %ERRORLEVEL%==5 (
+	SET PLAYLIST_REVERSE=--playlist-reverse
+	IF "%ARCHIVAL%"=="True" (
+		SET SAVE_PATH="%~d0%~p0Archive\%%(uploader)s\[%%(upload_date)s] %%(title)s (%%(id)s).%%(ext)s"
+	) ELSE (
+		SET SAVE_PATH="%~d0%~p0%%(uploader)s\[%%(upload_date)s] %%(title)s (%%(id)s).%%(ext)s"
+	)
+)
+IF %ERRORLEVEL%==6 (
+	IF "%ARCHIVAL%"=="True" (
+		SET SAVE_PATH="%~d0%~p0Archive\%%(playlist_title)s\%%(playlist_title)s - %%(title)s.%%(ext)s"
+	) ELSE (
+		SET SAVE_PATH="%~d0%~p0%%(playlist_title)s\%%(playlist_title)s - %%(title)s.%%(ext)s"
+	)
+)
+IF %ERRORLEVEL%==7 CALL :CUSTOM_PLAYLIST_FORM
+EXIT /B
+
+:CUSTOM_PLAYLIST_FORM
+CLS
+ECHO Custom Playlist
+ECHO.
+ECHO Example:
+ECHO. - %%(title)s.%%(ext)s
+ECHO. - %%(uploader)s\%%(title)s.%%(ext)s
+ECHO. - %%(playlist)s\#%%(playlist_index)s - %%(title)s.%%(ext)s
+ECHO. - %%(uploader)s\%%(playlist)s\#%%(playlist_index)s - %%(title)s.%%(ext)s
+ECHO. - %%(playlist)s\(%%(playlist_index)s) %%(title)s.%%(ext)s
+ECHO. - %%(uploader)s\%%(playlist)s\(%%(playlist_index)s) %%(title)s.%%(ext)s
+ECHO. - %%(uploader)s\[%%(upload_date)s] %%(title)s.%%(ext)s
+ECHO. - %%(uploader)s\[%%(upload_date)s] %%(title)s (%%(id)s).%%(ext)s
+ECHO. - %%(playlist_title)s\%%(playlist_title)s - %%(title)s.%%(ext)s
+ECHO.
+ECHO Documentation: https://github.com/yt-dlp/yt-dlp#output-template
+ECHO.
+SET /P CUSTOM_PLAYLIST=Enter Template Here: 
+IF "%ARCHIVAL%"=="True" (
+	SET SAVE_PATH="%~d0%~p0Archive\%CUSTOM_PLAYLIST%"
+) ELSE (
+	SET SAVE_PATH="%~d0%~p0%CUSTOM_PLAYLIST%"
 )
 EXIT /B
 
@@ -303,10 +348,9 @@ IF DEFINED SUBTITLE_LANGUAGE (
 CLS & CHOICE /C yn /M "Download YouTube's Automatically Generated Subtitle"
 IF %ERRORLEVEL%==1 SET SUBTITLE_AUTO=--write-auto-sub
 SET SUBTITLE=--skip-download --write-sub --sub-format best --convert-subs ass %SUBTITLE_AUTO% %SUBTITLE_LANGUAGE%
-SET SAVEPATH="%~d0%~p0%%(title)s.%%(ext)s"
 EXIT /B
 
-:LIST
+:LIST_WEBSITE
 "%~d0%~p0tools\yt-dlp.exe" --extractor-descriptions>"%TEMP%\YouTube-DL Supported Websites"
 START "YouTube-DL Supported Websites" /B Notepad "%TEMP%\YouTube-DL Supported Websites"
 GOTO :MODE
@@ -331,7 +375,7 @@ IF "%VERSION%"=="%VERSION_CHECK%" (
 )
 CLS & ECHO Checking for yt-dlp updates . . . & ECHO.
 "%~d0%~p0tools\yt-dlp.exe" -U --no-check-certificate
-IF EXIST "%~d0%~p0tools\youtube-dl-updater.bat" TIMEOUT /T 6 /NOBREAK>NUL
+IF EXIST "%~d0%~p0tools\yt-dlp.exe.old" TIMEOUT /T 6 /NOBREAK>NUL
 EXIT /B
 
 :END
